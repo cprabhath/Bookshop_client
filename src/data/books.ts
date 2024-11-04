@@ -2,9 +2,9 @@ import { Book } from "@/types";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const BASEURL = import.meta.env.VITE_REACT_APP_API_URL;
+// const BASEURL = import.meta.env.VITE_REACT_APP_API_URL;
 
-let books: Book[] = [
+const books: Book[] = [
   {
     id: '1',
     title: 'Default Book 1',
@@ -27,13 +27,13 @@ let books: Book[] = [
   },
 ];
 
-try {
-  const response = await axios.get(`${BASEURL}/books`);
-  books = response.data;
-} catch (error) {
-  toast.error("Failed to fetch books from the server");
-  console.error(error);
-}
+// try {
+//   const response = await axios.get(`${BASEURL}/books`);
+//   books = response.data;
+// } catch (error) {
+//   toast.error("Failed to fetch books from the server");
+//   console.error(error);
+// }
 
 export { books };
 
