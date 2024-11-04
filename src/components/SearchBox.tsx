@@ -2,11 +2,12 @@ import { Search, X, Loader2 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { books } from '../data/books';
 import { useNavigate } from 'react-router-dom';
+import { Book } from '../types';
 
 export default function SearchBox() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState(books);
+  const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -15,31 +16,37 @@ export default function SearchBox() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(event.target as Node)
-      ) {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         handleCloseResults();
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [searchQuery]);
+  }, []);
 
   useEffect(() => {
+    // Clear previous timeout for debouncing
     if (searchTimeout.current) {
       clearTimeout(searchTimeout.current);
     }
 
-    if (searchQuery) {
+    if (searchQuery.trim()) {
       setIsLoading(true);
+      // Debounced search with a 300ms delay
       searchTimeout.current = setTimeout(() => {
-        const filtered = books.filter(
-          (book) =>
-            book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            book.author.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        const query = searchQuery.trim().toLowerCase();
+        const queryTokens = query.split(' '); // Split into words
+
+        const filtered = books.filter((book) => {
+          const title = book.title.toLowerCase();
+          const author = book.author.toLowerCase();
+
+          // Check if all query tokens are present in either title or author
+          return queryTokens.every(
+            (token) => title.includes(token) || author.includes(token)
+          );
+        });
+
         setSearchResults(filtered);
         setShowResults(true);
         setIsLoading(false);
@@ -92,7 +99,7 @@ export default function SearchBox() {
         </div>
         <input
           type="text"
-          placeholder={isExpanded ? 'Search books...' : ''}
+          placeholder={isExpanded ? 'Search by Book name, author, or category' : ''}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => {
@@ -119,9 +126,7 @@ export default function SearchBox() {
       {/* Search Results Dropdown */}
       <div
         className={`absolute mt-2 w-full bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-hidden transition-all duration-300 ${
-          showResults
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 -translate-y-4 pointer-events-none'
+          showResults ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         }`}
       >
         <div className="overflow-y-auto max-h-96">

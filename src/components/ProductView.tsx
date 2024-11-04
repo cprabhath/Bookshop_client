@@ -7,7 +7,7 @@ import {
   Dialog,
   DialogContent,
 } from "../components/ui/dialog";
-import { toast } from 'react-toastify';
+import { useToast } from "../hooks/use-toast";
 
 interface ProductViewProps {
   book: Book;
@@ -17,15 +17,24 @@ interface ProductViewProps {
 export default function ProductView({ book, onClose }: ProductViewProps) {
   const { addToCart } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { toast } = useToast();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!isLoggedIn) {
-      toast.error("Please login to unlock exclusive offers");
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "Please login to add items to cart",
+        variant: "destructive"
+      })
       return;
     }
     addToCart(book);
-    alert("Item added to cart");
+    toast({
+      title: "Item added to cart",
+      description: `${book.title} has been added to your cart`,
+      variant: "default"
+    });
   }
 
   return (

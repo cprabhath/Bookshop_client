@@ -3,7 +3,8 @@ import { Book } from "../types";
 import { useCart } from "../context/CartContext";
 import { ShoppingBag } from "lucide-react";
 import { formatPrice } from "../utils/format";
-import { toast } from "react-toastify";
+import { useToast } from "../hooks/use-toast";
+
 
 interface BookCardProps {
   book: Book;
@@ -11,17 +12,26 @@ interface BookCardProps {
 
 export default function BookCard({ book }: BookCardProps) {
   const { addToCart } = useCart();
+  const { toast } = useToast()
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const discount = book.discount || 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!isLoggedIn) {
-      toast.error("Please login to unlock exclusive offers");
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "Please login to add items to cart",
+        variant: "destructive"
+      })
       return;
     }
     addToCart(book);
-    toast.success("Item added to cart");
+    toast({
+      title: "Item added to cart",
+      description: `${book.title} has been added to your cart`,
+      variant: "default"
+    });
   };
 
   return (
