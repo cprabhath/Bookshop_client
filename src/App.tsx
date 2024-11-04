@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import Orders from './pages/Orders';
 import Footer from './components/Footer';
 import Preloader from './components/PreLoader';
+import NotFound from './pages/NotFound';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,7 @@ export default function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <CartProvider>
         {loading && <Preloader />}
         <div className={`min-h-screen bg-gray-50 flex flex-col transition-opacity duration-500 ${
@@ -41,11 +42,12 @@ export default function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/orders" element={<Orders />} />
+              <Route path="*" element={<NotFound/>} />
             </Routes>
           </div>
           <Footer />
         </div>
       </CartProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
