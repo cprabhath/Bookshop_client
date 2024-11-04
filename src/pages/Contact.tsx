@@ -38,7 +38,7 @@ export default function Contact() {
   return (
     <>
     {isLoading && <Preloader />}
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-5xl text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-500 to-accent-500 mb-8">
           Contact Us

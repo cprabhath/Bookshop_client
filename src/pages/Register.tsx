@@ -168,7 +168,7 @@ export default function Register() {
                       Favorite Genres
                     </label>
                     <div className="grid grid-cols-2 gap-3">
-                      {books.map((book, index) => (
+                      {books.slice(0, 8).map((book, index) => (
                         <button
                           key={index}
                           type="button"

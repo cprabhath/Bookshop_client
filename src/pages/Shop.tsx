@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import ShopFilters from "../components/ShopFilters";
 import ProductView from "../components/ProductView";
 import { Book } from "../types";
-import Preloader from "../components/PreLoader";
 
 export default function Shop() {
   const [searchParams] = useSearchParams();
@@ -94,11 +93,12 @@ export default function Shop() {
 
   return (
     <>
-      {isLoading && <Preloader />}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
-        <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-500 to-accent-500 mb-8">
-          Our Collection
-        </h1>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
+      <div className="flex justify-center items-center mb-6">
+              <h2 className="text-4xl text-transparent font-bold bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-500 to-accent-500 p-2">
+                Our Collection
+              </h2>
+            </div>
 
         <div className="flex flex-col md:flex-row gap-8">
           {/* Filters Sidebar */}
