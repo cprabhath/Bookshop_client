@@ -16,7 +16,7 @@ export default function NotFound() {
         transition={{ duration: 0.5 }}
       >
         <img
-          src="https://cdn.svgator.com/images/2024/04/electrocuted-caveman-animation-404-error-page.gif"
+          src="./assets/404-error-page.gif"
           alt="Not Found"
           className="w-1/2 mx-auto"
         />
