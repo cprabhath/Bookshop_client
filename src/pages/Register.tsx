@@ -34,6 +34,15 @@ export default function Register() {
     { value: "bookworm", label: "Bookworm", description: "6+ books per month" },
   ];
 
+  const uniqueCategories = new Set<string>();
+  const uniqueBooks = books.filter((book) => {
+    if (book.category?.name && !uniqueCategories.has(book.category.name)) {
+      uniqueCategories.add(book.category.name);
+      return true;
+    }
+    return false;
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Register:", formData);
@@ -58,9 +67,7 @@ export default function Register() {
               <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-500 to-accent-500 mb-2">
                 Unlock the World of Books
               </h1>
-              <p>
-              Join the community and start your reading journey today.
-              </p>
+              <p>Join the community and start your reading journey today.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -168,19 +175,25 @@ export default function Register() {
                       Favorite Genres
                     </label>
                     <div className="grid grid-cols-2 gap-3">
-                      {books.slice(0, 8).map((book, index) => (
+                      {uniqueBooks.slice(0, 5).map((book, index) => (
                         <button
                           key={index}
                           type="button"
-                          onClick={() => handleGenreToggle(book.category)}
+                          onClick={() => {
+                            if (book.category?.name) {
+                              handleGenreToggle(book.category.name);
+                            }
+                          }}
                           className={`flex items-center px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                            formData.favoriteGenres.includes(book.category)
+                            formData.favoriteGenres.includes(
+                              book.category?.name || ""
+                            )
                               ? "bg-primary-100 text-primary-700 ring-2 ring-primary-500"
                               : "bg-gray-50 text-gray-600 hover:bg-gray-100"
                           }`}
                         >
                           <Bookmark className="h-4 w-4 mr-2" />
-                          {book.category}
+                          {book.category?.name}
                         </button>
                       ))}
                     </div>

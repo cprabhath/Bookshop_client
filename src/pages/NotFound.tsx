@@ -1,18 +1,13 @@
 import { Link } from "react-router-dom"; // Ensure you have react-router-dom installed
-import { useEffect } from "react";
 import { motion } from "framer-motion"; // Ensure you have framer-motion installed
 
 export default function NotFound() {
-  useEffect(() => {
-    document.title = "404 Not Found - Bookverse"; // Update the document title
-  }, []);
-
   return (
     <div className="flex items-center justify-center h-screen bg-white">
       <motion.div
         className="text-center"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: -120 }}
+        animate={{ opacity: 1, y: -80 }}
         transition={{ duration: 0.5 }}
       >
         <img

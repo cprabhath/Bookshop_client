@@ -16,7 +16,17 @@ export default function Shop() {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const categories = ["All", ...new Set(books.map((book) => book.category))];
+  const categoryStrings = books.map((book) => {
+    if (typeof book.category === "string") {
+      return book.category;
+    } else if (book.category && typeof book.category.name === "string") {
+      return book.category.name;
+    } else {
+      return "Unknown";
+    }
+  });
+
+  const categories = ["All", ...new Set(categoryStrings)];
   const booksPerPage = 9;
 
   useEffect(() => {
@@ -37,7 +47,8 @@ export default function Shop() {
   const filteredBooks = books
     .filter(
       (book) =>
-        (selectedCategory === "All" || book.category === selectedCategory) &&
+        (selectedCategory === "All" ||
+          book.category?.name === selectedCategory) &&
         book.price >= priceRange[0] &&
         book.price <= priceRange[1]
     )
@@ -94,11 +105,11 @@ export default function Shop() {
   return (
     <>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
-      <div className="flex justify-center items-center mb-6">
-              <h2 className="text-4xl text-transparent font-bold bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-500 to-accent-500 p-2">
-                Our Collection
-              </h2>
-            </div>
+        <div className="flex justify-center items-center mb-6">
+          <h2 className="text-4xl text-transparent font-bold bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-500 to-accent-500 p-2">
+            Our Collection
+          </h2>
+        </div>
 
         <div className="flex flex-col md:flex-row gap-8">
           {/* Filters Sidebar */}

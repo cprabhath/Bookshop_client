@@ -1,4 +1,5 @@
 import { Filter } from 'lucide-react';
+import { useState } from 'react';
 
 interface ShopFiltersProps {
   sortBy: string;
@@ -19,6 +20,12 @@ export default function ShopFilters({
   onCategoryChange,
   categories,
 }: ShopFiltersProps) {
+  const [showAll, setShowAll] = useState(false);
+
+  const toggleShowAll = () => {
+    setShowAll((prev) => !prev);
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -34,7 +41,7 @@ export default function ShopFilters({
         <select
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value)}
-          className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 p-2"
+          className="border w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 p-2"
         >
           <option value="featured">Featured</option>
           <option value="title_asc">Title: A to Z</option>
@@ -47,23 +54,28 @@ export default function ShopFilters({
 
       {/* Categories */}
       <div>
-        <h4 className="font-medium text-gray-900 mb-2">Categories</h4>
-        <div className="space-y-2">
-          {categories.map((category) => (
-            <label key={category} className="flex items-center">
-              <input
-                type="radio"
-                name="category"
-                value={category}
-                checked={selectedCategory === category}
-                onChange={(e) => onCategoryChange(e.target.value)}
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-              />
-              <span className="ml-2 text-gray-600">{category}</span>
-            </label>
-          ))}
-        </div>
+      <h4 className="font-medium text-gray-900 mb-2">Categories</h4>
+      <div className="space-y-2">
+        {(showAll ? categories : categories.slice(0, 6)).map((category, index) => (
+          <label key={index} className="flex items-center">
+            <input
+              type="radio"
+              name="category"
+              value={category}
+              checked={selectedCategory === category}
+              onChange={(e) => onCategoryChange(e.target.value)}
+              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+            />
+            <span className="ml-2 text-gray-600">{category}</span>
+          </label>
+        ))}
       </div>
+      {categories.length > 6 && (
+        <button onClick={toggleShowAll} className="text-blue-500 hover:underline mt-2">
+          {showAll ? 'Show Less' : 'Show All'}
+        </button>
+      )}
+    </div>
 
       {/* Price Range */}
       <div>

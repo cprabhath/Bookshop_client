@@ -38,8 +38,8 @@ export default function BookSlider({ books }: BookSliderProps) {
         ref={containerRef}
         className="flex overflow-x-hidden scroll-smooth gap-6 py-4"
       >
-        {books.map((book) => (
-          <div key={book.id} className="flex-none w-64">
+        {books.map((book, index) => (
+          <div key={index} className="flex-none w-64">
             <BookCard book={book} />
           </div>
         ))}

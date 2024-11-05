@@ -39,11 +39,12 @@ export default function SearchBox() {
 
         const filtered = books.filter((book) => {
           const title = book.title.toLowerCase();
-          const author = book.author.toLowerCase();
+          const author = book.author?.name ? book.author.name.toLowerCase() : '';
+          const category = book.category?.name ? book.category.name.toLowerCase() : '';
 
           // Check if all query tokens are present in either title or author
           return queryTokens.every(
-            (token) => title.includes(token) || author.includes(token)
+            (token) => title.includes(token) || author?.includes(token) || category.includes(token)
           );
         });
 
@@ -157,7 +158,7 @@ export default function SearchBox() {
                     <h4 className="text-sm font-medium text-gray-900 line-clamp-1">
                       {book.title}
                     </h4>
-                    <p className="text-sm text-gray-500">{book.author}</p>
+                    <p className="text-sm text-gray-500">{book.author?.name}</p>
                   </div>
                 </div>
               ))}

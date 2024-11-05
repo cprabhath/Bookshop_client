@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { Book } from "../types";
 import { useCart } from "../context/CartContext";
 import { ShoppingBag } from "lucide-react";
 import { formatPrice } from "../utils/format";
 import { useToast } from "../hooks/use-toast";
+import { useAuth } from "../context/AuthContext";
 
 
 interface BookCardProps {
@@ -12,8 +13,8 @@ interface BookCardProps {
 
 export default function BookCard({ book }: BookCardProps) {
   const { addToCart } = useCart();
-  const { toast } = useToast()
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { toast } = useToast();
+  const { isLoggedIn } = useAuth();
   const discount = book.discount || 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -22,7 +23,7 @@ export default function BookCard({ book }: BookCardProps) {
       toast({
         title: "Uh oh! Something went wrong.",
         description: "Please login to add items to cart",
-        variant: "destructive"
+        variant: "info"
       })
       return;
     }
@@ -30,7 +31,7 @@ export default function BookCard({ book }: BookCardProps) {
     toast({
       title: "Item added to cart",
       description: `${book.title} has been added to your cart`,
-      variant: "default"
+      variant: "success"
     });
   };
 
@@ -52,7 +53,7 @@ export default function BookCard({ book }: BookCardProps) {
         <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
           {book.title}
         </h3>
-        <p className="text-sm text-gray-600 mb-2">by {book.author}</p>
+        <p className="text-sm text-gray-600 mb-2">by {book.author?.name}</p>
         <p className="text-sm text-gray-500 mb-4 line-clamp-2">
           {book.description}
         </p>

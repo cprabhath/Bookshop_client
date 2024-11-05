@@ -1,3 +1,4 @@
+import React, { useEffect, useState  } from "react";
 import {
   ShoppingCart,
   BookOpen,
@@ -8,34 +9,49 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
-import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import CartModal from "./CartModal";
 import LoginModal from "./LoginModal";
 import SearchBox from "./SearchBox";
+import { useAuth } from "../context/AuthContext";
+import LogoutConfirmation from "./Logout";
+import { useToast } from "../hooks/use-toast";
 
-export default function Navbar() {
+const Navbar: React.FC = () => {
   const { cartItems } = useCart();
+  const { toast } = useToast();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLogoutDialogOpen, setLogoutDialogOpen] = useState(false); 
+  const { isLoggedIn, logout } = useAuth();
   const location = useLocation();
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Temporary state for demo
-
+  
   const navLinks = [
-    { path: "/", label: "Home" },
+    { path: "/home", label: "Home" },
     { path: "/shop", label: "Shop" },
     { path: "/about", label: "About" },
     { path: "/contact", label: "Contact" },
   ];
 
   const profileLinks = [
-    { icon: User, label: "Manage Profile", path: "/profile" },
-    { icon: ShoppingBag, label: "My Orders", path: "/orders" },
-    { icon: LogOut, label: "Logout", action: () => setIsLoggedIn(false) },
+    { icon: User, label: "Manage Profile", path: "/home/profile" },
+    { icon: ShoppingBag, label: "My Orders", path: "/home/orders" },
+    { icon: LogOut, label: "Logout", action: () => setLogoutDialogOpen(true) },
   ];
+
+  useEffect(() => {
+    const welcome = localStorage.getItem("token");
+    if (welcome) {
+      toast({
+        title: "Welcome to Bookverse! 📚",
+        description: "You journey will continue from where you left off",
+        variant: "success",
+      });
+    }
+  }, [toast]);
 
   return (
     <>
@@ -43,7 +59,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link to="/" className="flex items-center">
+              <Link to="/home" className="flex items-center">
                 <BookOpen className="h-8 w-8 text-primary-600" />
                 <span className="ml-2 text-xl font-bold text-gray-800">
                   Bookverse
@@ -206,9 +222,18 @@ export default function Navbar() {
           </div>
         )}
       </nav>
+
+      <LogoutConfirmation
+        onLogout={logout}
+        isOpen={isLogoutDialogOpen}
+        onClose={() => setLogoutDialogOpen(false)}
+      />
+
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>
   );
 }
+
+export default Navbar;
