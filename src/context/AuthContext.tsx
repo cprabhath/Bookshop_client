@@ -37,7 +37,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       title: "Completed!",
       description: "You have successfully logged out",
       variant: "info"
-    })
+    });
+    window.location.reload();
     setIsLoggedIn(false);
   };
 

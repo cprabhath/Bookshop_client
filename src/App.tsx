@@ -1,7 +1,7 @@
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
@@ -16,17 +16,20 @@ import NotFound from "./pages/NotFound";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const tokenRef = useRef<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    tokenRef.current = localStorage.getItem("token");
-
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
+    const handleStorageChange = () => {
+      setToken(localStorage.getItem("token"));
+    };
+    window.addEventListener("storage", handleStorageChange);
+    setToken(localStorage.getItem("token"));
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [setToken]);
 
   return (
     <HashRouter>
@@ -46,12 +49,18 @@ export default function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/home" element={<Home />} />
-                {tokenRef.current && (
+                {token ? (
                   <>
                     <Route path="/home/profile" element={<Profile />} />
                     <Route path="/home/orders" element={<Orders />} />
                   </>
+                ) : (
+                  <Route
+                    path="/home/*"
+                    element={<Navigate to="/home" replace />}
+                  />
                 )}
+                <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

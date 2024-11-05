@@ -12,8 +12,10 @@ import {
 import { Link } from "react-router-dom";
 import { Input } from "../components/ui/input";
 import { books } from "../data/books";
+import { useToast } from "../hooks/use-toast";
 
 export default function Register() {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -45,7 +47,14 @@ export default function Register() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Register:", formData);
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "Password and confirm password does not matched!",
+        variant: "destructive"
+      });
+      return;
+    }
   };
 
   const handleGenreToggle = (genre: string) => {
@@ -85,6 +94,7 @@ export default function Register() {
                         onChange={(e) =>
                           setFormData({ ...formData, name: e.target.value })
                         }
+                        placeholder="Enter your full name"
                         className="pl-10 w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                         required
                       />
@@ -103,6 +113,7 @@ export default function Register() {
                         onChange={(e) =>
                           setFormData({ ...formData, email: e.target.value })
                         }
+                        placeholder="Enter your email address"
                         className="pl-10 w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                         required
                       />
@@ -121,6 +132,7 @@ export default function Register() {
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
                         }
+                        placeholder="Enter your phone number"
                         className="pl-10 w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                         required
                       />
@@ -139,6 +151,7 @@ export default function Register() {
                         onChange={(e) =>
                           setFormData({ ...formData, password: e.target.value })
                         }
+                        placeholder="Enter your password"
                         className="pl-10 w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                         required
                       />
@@ -160,6 +173,7 @@ export default function Register() {
                             confirmPassword: e.target.value,
                           })
                         }
+                        placeholder="Confirm your password"
                         className="pl-10 w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                         required
                       />
