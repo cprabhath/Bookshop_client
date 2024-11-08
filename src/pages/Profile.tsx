@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { User, Mail, Phone, MapPin, Camera, BookOpen, Heart, Clock, Shield } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
+import { Customer } from "../types";
+import PasswordChange from '../components/PasswordChange';
 
 export default function Profile() {
   const [profile, setProfile] = useState({
@@ -15,8 +17,15 @@ export default function Profile() {
     favoriteGenres: ['Fiction', 'Mystery', 'Science Fiction']
   });
 
+  const [userDetails, setUserDetails] = useState<Customer>(JSON.parse(localStorage.getItem("UserDetails") || "{}"));
+  const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
+  useEffect(() => {
+    setUserDetails(JSON.parse(localStorage.getItem("UserDetails") || "{}"));
+  }, []);
+
+  const year = new Date(userDetails.createAt).getFullYear();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsEditing(false);
@@ -29,7 +38,8 @@ export default function Profile() {
   ];
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
+    <>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
       <div className="flex justify-center items-center mb-6">
           <h2 className="text-4xl text-transparent font-bold bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-500 to-accent-500 p-2">
             Your Profile
@@ -46,7 +56,7 @@ export default function Profile() {
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2">
                 <div className="relative">
                   <img
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=200&h=200&q=80"
+                    src={userDetails.image}
                     alt="Profile"
                     className="w-32 h-32 rounded-full border-4 border-white object-cover"
                   />
@@ -58,8 +68,9 @@ export default function Profile() {
             </div>
             
             <div className="pt-20 pb-8 px-6 text-center">
-              <h2 className="text-2xl font-bold text-gray-900">{profile.name}</h2>
-              <p className="text-gray-500 mt-1">Member since 2024</p>
+              <h2 className="text-2xl font-bold text-gray-900">{userDetails.name}</h2>
+              <p className="text-gray-500 mt-1">
+                {"Member since " + year}</p>
               
               <div className="mt-6 grid grid-cols-3 gap-4 border-t border-gray-100 pt-6">
                 {stats.map((stat, index) => (
@@ -82,7 +93,7 @@ export default function Profile() {
               <h3 className="text-lg font-semibold text-gray-900">Security</h3>
             </div>
             <div className="space-y-4">
-              <button className="w-full text-left px-4 py-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+              <button onClick={() => setIsOpen(true)} className="w-full text-left px-4 py-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
                 Change Password
               </button>
               
@@ -115,7 +126,7 @@ export default function Profile() {
                     </div>
                     <Input
                       type="text"
-                      value={profile.name}
+                      value={userDetails.name}
                       disabled={!isEditing}
                       className="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50 disabled:text-black"
                     />
@@ -130,7 +141,7 @@ export default function Profile() {
                     </div>
                     <Input
                       type="email"
-                      value={profile.email}
+                      value={userDetails.email}
                       disabled={!isEditing}
                       className="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50 disabled:text-black"
                     />
@@ -145,7 +156,7 @@ export default function Profile() {
                     </div>
                     <Input
                       type="tel"
-                      value={profile.phone}
+                      value={userDetails.mobileNumber}
                       disabled={!isEditing}
                       className="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50 disabled:text-black"
                     />
@@ -160,7 +171,7 @@ export default function Profile() {
                     </div>
                     <Input
                       type="text"
-                      value={profile.address}
+                      value={userDetails.address}
                       disabled={!isEditing}
                       className="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50 disabled:text-black"
                     />
@@ -200,7 +211,7 @@ export default function Profile() {
 
           {/* Reading Progress */}
           <div className="mt-8 bg-white rounded-2xl shadow-xl p-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Reading Progress</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">Monthly Goal</h3>
             <div className="relative pt-1">
               <div className="flex mb-2 items-center justify-between">
                 <div>
@@ -221,7 +232,7 @@ export default function Profile() {
                 ></div>
               </div>
               <p className="text-sm text-gray-600">
-                You've read {profile.booksRead} out of your {profile.readingGoal} book goal this year.
+                You've ordered {profile.booksRead} out of your {profile.readingGoal} books goal this year.
                 Keep it up!
               </p>
             </div>
@@ -229,5 +240,8 @@ export default function Profile() {
         </div>
       </div>
     </main>
+
+    <PasswordChange isOpen={isOpen} onClose={() => setIsOpen(false)} />
+    </>
   );
 }

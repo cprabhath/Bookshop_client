@@ -27,6 +27,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
+    window.location.reload();
     setIsLoggedIn(true);
   };
 

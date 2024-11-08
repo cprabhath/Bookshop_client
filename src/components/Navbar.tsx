@@ -16,6 +16,7 @@ import SearchBox from "./SearchBox";
 import { useAuth } from "../context/AuthContext";
 import LogoutConfirmation from "./Logout";
 import { useToast } from "../hooks/use-toast";
+import { Customer } from "../types";
 
 const Navbar: React.FC = () => {
   const { cartItems } = useCart();
@@ -25,6 +26,7 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutDialogOpen, setLogoutDialogOpen] = useState(false); 
+  const [userDetails, setUserDetails] = useState<Customer>(JSON.parse(localStorage.getItem("UserDetails") || "{}"));
   const { isLoggedIn, logout } = useAuth();
   const location = useLocation();
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -44,6 +46,7 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     const welcome = localStorage.getItem("token");
+    setUserDetails(JSON.parse(localStorage.getItem("UserDetails") || "{}"));
     if (welcome) {
       toast({
         title: "Welcome to Bookverse! 📚",
@@ -93,7 +96,7 @@ const Navbar: React.FC = () => {
                   >
                     <div className="relative">
                       <img
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=48&h=48&q=80"
+                        src={userDetails?.image}
                         alt="Profile"
                         className="h-8 w-8 rounded-full ring-2 ring-primary-500"
                       />

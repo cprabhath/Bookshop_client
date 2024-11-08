@@ -33,6 +33,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
     if (result.token) {
       setloading(false);
+      localStorage.setItem("UserDetails", JSON.stringify(result.user));
       login(result.token);
       onClose();
       return;

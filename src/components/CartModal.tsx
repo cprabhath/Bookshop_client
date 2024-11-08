@@ -2,20 +2,61 @@ import { Minus, Plus, Trash2, CreditCard } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
 import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
+import AxiosInstance from "../lib/AxiosInstence";
+import { loadStripe } from "@stripe/stripe-js";
+import { useToast } from "../hooks/use-toast";
 
 interface CartModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const stripePromise = loadStripe(
+  import.meta.env.VITE_REACT_APP_STRIPE_PUBLISHABLE_KEY
+);
+
 export default function CartModal({ isOpen, onClose }: CartModalProps) {
+  const { toast } = useToast();
   const { cartItems, updateQuantity, removeFromCart } = useCart();
+
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-
+  
   if (!isOpen) return null;
+
+  const handlePayments = async () => {
+    try {
+      const response = await AxiosInstance.post("/payments/create-checkout-session", {
+        cartItems: cartItems.map(item => ({
+          productName: item.title, // Make sure this matches your item property
+          amount: item.price, // Assuming price is in dollars
+          quantity: item.quantity,
+        })),
+      });
+  
+      const { sessionId } = response.data;
+  
+      const stripe = await stripePromise;
+      if (stripe) {
+        await stripe.redirectToCheckout({ sessionId });
+      } else {
+        toast({
+          title: "Stripe initialization failed.",
+          description: "Please try again later.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "Please try again",
+        variant: "destructive",
+      });
+      console.error("Error creating checkout session", error);
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -86,7 +127,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                   <span>Grand Total:</span>
                   <span>{formatPrice(total)}</span>
                 </div>
-                <button className="w-full bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 transition-colors flex gap-2 items-center justify-center">
+                <button onClick={handlePayments} className="w-full bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 transition-colors flex gap-2 items-center justify-center">
                   <CreditCard className="h-5 w-5" />
                   Proceed to Checkout
                 </button>

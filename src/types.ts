@@ -1,10 +1,10 @@
 type Author = {
-  name : string;
-}
+  name: string;
+};
 
 type Category = {
-  name : string;
-}
+  name: string;
+};
 
 export interface Book {
   id: string;
@@ -16,6 +16,17 @@ export interface Book {
   category?: Category;
   discount: number;
   isbn?: string;
+}
+
+export interface Customer {
+  id: number;
+  image: string;
+  name: string;
+  email: string;
+  mobileNumber: string;
+  address: string;
+  createAt: string;
+  carts?: CartItem[];
 }
 
 export interface CartItem extends Book {
