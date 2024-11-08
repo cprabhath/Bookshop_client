@@ -1,4 +1,3 @@
-import React from 'react';
 import { Book, Heart, Globe, Users, BookOpen, Star, Trophy, Sparkles } from 'lucide-react';
 
 export default function About() {
@@ -56,12 +55,12 @@ export default function About() {
   return (
     <main className="bg-gradient-to-br from-primary-50 via-white to-secondary-50">
       {/* Hero Section */}
-      <div className="relative h-[500px] bg-gradient-to-r from-primary-600 to-secondary-600 overflow-hidden">
-        <div className="absolute inset-0">
+      <div className="relative h-[400px] bg-gradient-to-r from-primary-600 to-secondary-600 overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
           <img
             src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=2000"
             alt="Library"
-            className="w-full h-full object-cover opacity-20"
+            className="w-full h-full object-cover opacity-80"
           />
         </div>
         <div className="absolute inset-0 flex items-center justify-center text-center px-4">

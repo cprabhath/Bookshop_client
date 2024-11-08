@@ -8,27 +8,21 @@ import {
 } from "../components/ui/dialog";
 import { useToast } from "../hooks/use-toast";
 import { Input } from "./ui/input";
+import AxiosInstance from "../lib/AxiosInstence";
 
 interface PasswordChangeProps {
   isOpen: boolean;
   onClose: () => void;
+  Email: string;
 }
 
-const PasswordChange = ({ isOpen, onClose }: PasswordChangeProps) => {
+const PasswordChange = ({ isOpen, onClose, Email }: PasswordChangeProps) => {
   const { toast } = useToast();
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "" || newPassword === "") {
-      return toast({
-        title: "Uh oh! Something went wrong.",
-        description: "Please fill in all the fields",
-        variant: "info",
-      });
-    }
-
     if (password !== newPassword) {
       toast({
         title: "Uh oh! Something went wrong. 😕",
@@ -37,8 +31,37 @@ const PasswordChange = ({ isOpen, onClose }: PasswordChangeProps) => {
       });
       return;
     }
-    // Add logic to change password
-    onClose();
+
+    const formData = {
+      Email: Email,
+      Password: password,
+    };
+
+    await AxiosInstance.post("/Auth/password-reset", formData)
+      .then(() => {
+        toast({
+          title: "Success! 🎉",
+          description: "Password changed successfully",
+          variant: "success",
+        });
+
+        setPassword("");
+        setNewPassword("");
+        onClose();
+      })
+      .catch((err) => {
+        if (err.response.data) {
+          err.response.data.$values
+            .map((x) => x.errorMessage || x.description)
+            .forEach((error: string) => {
+              toast({
+                title: "Uh oh! Something went wrong.",
+                description: error,
+                variant: "destructive",
+              });
+            });
+        }
+      });
   };
 
   return (

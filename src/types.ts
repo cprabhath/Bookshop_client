@@ -9,11 +9,11 @@ type Category = {
 export interface Book {
   id: string;
   title: string;
-  author?: Author;
+  author: Author;
   price: number;
   image: string;
   description: string;
-  category?: Category;
+  category: Category;
   discount: number;
   isbn?: string;
 }
@@ -31,4 +31,15 @@ export interface Customer {
 
 export interface CartItem extends Book {
   quantity: number;
+}
+
+
+export interface Order {
+  id: string;
+  date: string;
+  total: number;
+  status: string;
+  trackingNumber: string;
+  estimatedDelivery: string;
+  items: CartItem[];
 }

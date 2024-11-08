@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Minus, Plus, Trash2, CreditCard } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
@@ -18,26 +19,31 @@ const stripePromise = loadStripe(
 export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const { toast } = useToast();
   const { cartItems, updateQuantity, removeFromCart } = useCart();
+  const [loading, setLoading] = useState(false);
 
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  
+
   if (!isOpen) return null;
 
   const handlePayments = async () => {
+    setLoading(true);
     try {
-      const response = await AxiosInstance.post("/payments/create-checkout-session", {
-        cartItems: cartItems.map(item => ({
-          productName: item.title, // Make sure this matches your item property
-          amount: item.price, // Assuming price is in dollars
-          quantity: item.quantity,
-        })),
-      });
-  
+      const response = await AxiosInstance.post(
+        "/payments/create-checkout-session",
+        {
+          cartItems: cartItems.map((item) => ({
+            productName: item.title,
+            amount: item.price,
+            quantity: item.quantity,
+          })),
+        }
+      );
+
       const { sessionId } = response.data;
-  
+
       const stripe = await stripePromise;
       if (stripe) {
         await stripe.redirectToCheckout({ sessionId });
@@ -48,6 +54,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           variant: "destructive",
         });
       }
+      setLoading(false);
     } catch (error) {
       toast({
         title: "Uh oh! Something went wrong.",
@@ -62,7 +69,9 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">Your Cart</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+            Your Cart
+          </h2>
         </DialogHeader>
         <div className="relative bg-white rounded-lg max-w-lg w-full p-2">
           {cartItems.length === 0 ? (
@@ -127,9 +136,13 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                   <span>Grand Total:</span>
                   <span>{formatPrice(total)}</span>
                 </div>
-                <button onClick={handlePayments} className="w-full bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 transition-colors flex gap-2 items-center justify-center">
+                <button
+                  disabled={loading}
+                  onClick={handlePayments}
+                  className="w-full bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 transition-colors flex gap-2 items-center justify-center disabled:opacity-60 "
+                >
                   <CreditCard className="h-5 w-5" />
-                  Proceed to Checkout
+                  {loading ? "Processing..." : "Proceed to Checkout"}
                 </button>
               </div>
             </>

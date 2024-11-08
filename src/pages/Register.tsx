@@ -8,22 +8,26 @@ import {
   Library,
   Bookmark,
   GraduationCap,
+  LocateFixed,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
 import { books } from "../data/books";
 import { useToast } from "../hooks/use-toast";
+import AxiosInstance from "../lib/AxiosInstence";
 
 export default function Register() {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
+    MobileNumber: "",
     password: "",
     confirmPassword: "",
+    address: "",
     favoriteGenres: [] as string[],
-    readingGoal: "casual",
+    ReadingGoals: "casual",
   });
 
   const readingGoals = [
@@ -45,16 +49,50 @@ export default function Register() {
     return false;
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Customer Register
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       toast({
         title: "Uh oh! Something went wrong.",
         description: "Password and confirm password does not matched!",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
+
+    await AxiosInstance.post("/Auth/customer-register", formData)
+      .then(() => {
+        toast({
+          title: "Account created successfully!",
+          description: "You can now login to your account.",
+          variant: "success",
+        });
+        setFormData({
+          name: "",
+          email: "",
+          MobileNumber: "",
+          password: "",
+          confirmPassword: "",
+          address: "",
+          favoriteGenres: [],
+          ReadingGoals: "casual",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response.data) {
+          err.response.data.$values
+            .map((x) => x.errorMessage || x.description)
+            .forEach((error: string) => {
+              toast({
+                title: "Uh oh! Something went wrong.",
+                description: error,
+                variant: "destructive",
+              });
+            });
+        }
+      });
   };
 
   const handleGenreToggle = (genre: string) => {
@@ -128,9 +166,12 @@ export default function Register() {
                     <div className="relative">
                       <Input
                         type="tel"
-                        value={formData.phone}
+                        value={formData.MobileNumber}
                         onChange={(e) =>
-                          setFormData({ ...formData, phone: e.target.value })
+                          setFormData({
+                            ...formData,
+                            MobileNumber: e.target.value,
+                          })
                         }
                         placeholder="Enter your phone number"
                         className="pl-10 w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 transition-colors"
@@ -180,6 +221,27 @@ export default function Register() {
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     </div>
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Address
+                    </label>
+                    <div className="relative">
+                      <Textarea
+                        value={formData.address}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            address: e.target.value,
+                          })
+                        }
+                        placeholder="Confirm your password"
+                        className="resize-none pl-10 w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                        required
+                      />
+                      <LocateFixed className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Reading Preferences */}
@@ -222,7 +284,7 @@ export default function Register() {
                         <label
                           key={goal.value}
                           className={`flex items-center p-4 rounded-lg cursor-pointer transition-all ${
-                            formData.readingGoal === goal.value
+                            formData.ReadingGoals === goal.value
                               ? "bg-primary-50 ring-2 ring-primary-500"
                               : "bg-gray-50 hover:bg-gray-100"
                           }`}
@@ -231,18 +293,18 @@ export default function Register() {
                             type="radio"
                             name="readingGoal"
                             value={goal.value}
-                            checked={formData.readingGoal === goal.value}
+                            checked={formData.ReadingGoals === goal.value}
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
-                                readingGoal: e.target.value,
+                                ReadingGoals: e.target.value,
                               })
                             }
                             className="hidden"
                           />
                           <GraduationCap
                             className={`h-5 w-5 mr-3 ${
-                              formData.readingGoal === goal.value
+                              formData.ReadingGoals === goal.value
                                 ? "text-primary-600"
                                 : "text-gray-400"
                             }`}
@@ -268,7 +330,7 @@ export default function Register() {
                   className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
                 >
                   <Library className="h-5 w-5 mr-2" />
-                  Join the Community
+                  Join with us
                 </button>
               </div>
             </form>

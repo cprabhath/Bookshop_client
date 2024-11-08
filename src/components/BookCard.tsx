@@ -53,7 +53,7 @@ export default function BookCard({ book }: BookCardProps) {
         <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
           {book.title}
         </h3>
-        <p className="text-sm text-gray-600 mb-2">by {book.author?.name}</p>
+        <p className="text-sm text-gray-600 mb-2">by {book.author.name}</p>
         <p className="text-sm text-gray-500 mb-4 line-clamp-2">
           {book.description}
         </p>

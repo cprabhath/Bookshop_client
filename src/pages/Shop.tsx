@@ -1,20 +1,38 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import BookCard from "../components/BookCard";
-import { books } from "../data/books";
+import { getBooks } from "../data/books";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ShopFilters from "../components/ShopFilters";
 import ProductView from "../components/ProductView";
 import { Book } from "../types";
+import Spinner from "../components/Spinner";
 
 export default function Shop() {
   const [searchParams] = useSearchParams();
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("featured");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedBooks = await getBooks(); 
+        setBooks(fetchedBooks); 
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      } finally {
+        setLoading(false); 
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const categoryStrings = books.map((book) => {
     if (typeof book.category === "string") {
@@ -35,7 +53,7 @@ export default function Shop() {
       const book = books.find((b) => b.id === bookId);
       if (book) setSelectedBook(book);
     }
-  }, [searchParams]);
+  }, [books, searchParams]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -103,6 +121,10 @@ export default function Shop() {
   };
 
   return (
+    <>
+    {loading ? (
+      <Spinner />
+    ) : (
     <>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
         <div className="flex justify-center items-center mb-6">
@@ -231,6 +253,8 @@ export default function Shop() {
           />
         )}
       </main>
+    </>
+    )}
     </>
   );
 }

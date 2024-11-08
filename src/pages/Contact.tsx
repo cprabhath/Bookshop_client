@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Globe } from 'lucide-react';
+import { useToast } from '../hooks/use-toast';
 
 export default function Contact() {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -11,7 +13,14 @@ export default function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    if(!formData.name || !formData.email || !formData.subject || !formData.message) {
+      toast({
+        title: 'Error submitting form',
+        description: 'Please fill out all fields.',
+        variant: 'destructive'
+      });
+      return;
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -46,7 +55,15 @@ export default function Contact() {
     <main className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
       {/* Hero Section */}
       <div className="relative h-[300px] bg-gradient-to-r from-primary-600 to-secondary-600 overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
+        <div className="absolute inset-0 bg-black opacity-20">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=2000"
+            alt="Library"
+            className="w-full h-full object-cover opacity-80"
+          />
+        </div>
+        </div>
         <div className="absolute inset-0 flex items-center justify-center text-center">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Get in Touch</h1>
@@ -98,7 +115,6 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                    required
                   />
                 </div>
                 <div>
@@ -109,7 +125,6 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                    required
                   />
                 </div>
               </div>
@@ -122,7 +137,6 @@ export default function Contact() {
                   value={formData.subject}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  required
                 />
               </div>
 
@@ -134,7 +148,6 @@ export default function Contact() {
                   onChange={handleChange}
                   rows={6}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
-                  required
                 />
               </div>
 

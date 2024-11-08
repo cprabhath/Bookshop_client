@@ -17,11 +17,15 @@ import { useAuth } from "../context/AuthContext";
 import LogoutConfirmation from "./Logout";
 import { useToast } from "../hooks/use-toast";
 import { Customer } from "../types";
+import AxiosInstance from "../lib/AxiosInstence";
 
 const Navbar: React.FC = () => {
   const { cartItems } = useCart();
   const { toast } = useToast();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [ProfilePicture, setProfilePicture] = useState({
+    image:''
+  });
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -54,7 +58,20 @@ const Navbar: React.FC = () => {
         variant: "success",
       });
     }
-  }, [toast]);
+
+    AxiosInstance.get(`/Customer/${userDetails.id}`)
+      .then((res) => {
+        setProfilePicture(res.data);
+      })
+      .catch(() => {
+        toast({
+          title: "Error",
+          description: "Failed to fetch user details",
+          variant: "destructive",
+        })
+      });
+
+  }, [toast, userDetails.id]);
 
   return (
     <>
@@ -96,7 +113,7 @@ const Navbar: React.FC = () => {
                   >
                     <div className="relative">
                       <img
-                        src={userDetails?.image}
+                        src={ProfilePicture.image}
                         alt="Profile"
                         className="h-8 w-8 rounded-full ring-2 ring-primary-500"
                       />

@@ -1,59 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Package, Truck, CheckCircle, Clock, Search, Filter, ChevronDown, BookOpen, Undo2, MessageCircleHeart, ShoppingBag } from 'lucide-react';
 import { formatPrice } from '../utils/format';
 import FeedbackModel from '../components/FeedbackModel';
 import { Input } from '../components/ui/input';
+import { getOrders } from '../data/orders';
+import { Order } from '../types';
+import Spinner from "../components/Spinner";
 
-const orders = [
-  {
-    id: 'ORD-2024-001',
-    date: '2024-03-15',
-    total: 89.97,
-    status: 'Delivered',
-    trackingNumber: 'TRK123456789',
-    estimatedDelivery: '2024-03-20',
-    items: [
-      {
-        id: '1',
-        title: 'The Midnight Library',
-        price: 24.99,
-        quantity: 2,
-        image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=200'
-      },
-      {
-        id: '2',
-        title: 'Atomic Habits',
-        price: 19.99,
-        quantity: 1,
-        image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=200'
-      }
-    ]
-  },
-  {
-    id: 'ORD-2024-002',
-    date: '2024-03-10',
-    total: 47.98,
-    status: 'In Transit',
-    trackingNumber: 'TRK987654321',
-    estimatedDelivery: '2024-03-25',
-    items: [
-      {
-        id: '3',
-        title: 'Project Hail Mary',
-        price: 27.99,
-        quantity: 1,
-        image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=200'
-      },
-      {
-        id: '4',
-        title: 'The Psychology of Money',
-        price: 19.99,
-        quantity: 1,
-        image: 'https://images.unsplash.com/photo-1554774853-719586f82d77?auto=format&fit=crop&q=80&w=200'
-      }
-    ]
-  }
-];
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -73,36 +26,62 @@ const getStatusColor = (status: string) => {
     case 'In Transit':
       return 'bg-primary-100 text-primary-800';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-yellow-100 text-gray-800';
   }
 };
 
+
 export default function Orders() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [orders, setOrders] = useState<Order[]>([]);
   const [statusFilter, setStatusFilter] = useState('All');
   const [openFeedback, setOpenFeedback] = useState(false);
   const [sortBy, setSortBy] = useState('date');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const userID = localStorage.getItem("UserDetails");
+        const id = JSON.parse(userID as string);
+        const fetchedOrders = await getOrders(id.id);
+        setOrders(fetchedOrders);
+      } catch (e) {
+        alert("Error fetching Orders");
+        console.log(e);
+      } finally {
+        setLoading(false); 
+      }
+    };
+    fetchOrders();
+  }, []);
+  console.log(orders);
 
   const filteredOrders = orders
-    .filter(order => 
-      (statusFilter === 'All' || order.status === statusFilter) &&
-      (order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-       order.items.some(item => item.title.toLowerCase().includes(searchQuery.toLowerCase())))
-    )
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'date':
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
-        case 'total':
-          return b.total - a.total;
-        default:
-          return 0;
-      }
-    });
+  .filter(order => 
+    (statusFilter === 'All' || order.status === statusFilter) &&
+    (order.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     order.items?.some(item => item.title.toLowerCase().includes(searchQuery.toLowerCase())))
+  )
+  .sort((a, b) => {
+    switch (sortBy) {
+      case 'date':
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      case 'total':
+        return b.total - a.total;
+      default:
+        return 0;
+    }
+  });
 
   return (
     <>
+    {loading ? (
+      <Spinner />
+    ) : (
+      <>
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -155,6 +134,7 @@ export default function Orders() {
                       <option value="All">All</option>
                       <option value="Delivered">Delivered</option>
                       <option value="In Transit">In Transit</option>
+                      <option value="Pending">Pending</option>
                     </select>
                     
                     <h4 className="text-sm font-medium text-gray-900 mt-4 mb-2">Sort By</h4>
@@ -287,6 +267,8 @@ export default function Orders() {
         isOpen={openFeedback}
         onClose={() => setOpenFeedback(false)}
       />
+    </>
+    )}
     </>
   );
 }
