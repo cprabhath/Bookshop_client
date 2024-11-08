@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom"; // Ensure you have react-router-dom installed
-import { motion } from "framer-motion"; // Ensure you have framer-motion installed
+import { Link } from "react-router-dom"; 
+import { motion } from "framer-motion";
 
 export default function NotFound() {
   return (

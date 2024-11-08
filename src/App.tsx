@@ -1,21 +1,24 @@
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Shop from "./pages/Shop";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Register from "./pages/Register";
-import Profile from "./pages/Profile";
-import Orders from "./pages/Orders";
 import Footer from "./components/Footer";
 import Preloader from "./components/PreLoader";
 import NotFound from "./pages/NotFound";
 
+const Home = lazy(() => import("./pages/Home"));
+const Shop = lazy(() => import("./pages/Shop"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Register = lazy(() => import("./pages/Register"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Orders = lazy(() => import("./pages/Orders"));
+const PaymentCompleted = lazy(() => import("./pages/PaymentCompleted"));
+const PaymentCancelled = lazy(() => import("./pages/PaymentCancelled"));
+const ChatSupport = lazy(() => import("./components/ChatSupport"));
+
 export default function App() {
-  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -24,23 +27,16 @@ export default function App() {
     };
     window.addEventListener("storage", handleStorageChange);
     setToken(localStorage.getItem("token"));
-    const timer = setTimeout(() => setLoading(false), 2000);
     return () => {
-      clearTimeout(timer);
       window.removeEventListener("storage", handleStorageChange);
     };
   }, [setToken]);
 
   return (
     <HashRouter>
-      <AuthProvider>
-        <CartProvider>
-          {loading && <Preloader />}
-          <div
-            className={`min-h-screen bg-gray-50 flex flex-col transition-opacity duration-500 ${
-              loading ? "opacity-0" : "opacity-100"
-            }`}
-          >
+      <Suspense fallback={<Preloader />}>
+        <AuthProvider>
+          <CartProvider>
             <Navbar />
             <div className="pt-16">
               <Routes>
@@ -53,6 +49,14 @@ export default function App() {
                   <>
                     <Route path="/home/profile" element={<Profile />} />
                     <Route path="/home/orders" element={<Orders />} />
+                    <Route
+                      path="/payment/complete"
+                      element={<PaymentCompleted />}
+                    />
+                    <Route
+                      path="/payment/cancelled"
+                      element={<PaymentCancelled />}
+                    />
                   </>
                 ) : (
                   <Route
@@ -61,13 +65,15 @@ export default function App() {
                   />
                 )}
                 <Route path="/" element={<Navigate to="/home" replace />} />
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
             <Footer />
-          </div>
-        </CartProvider>
-      </AuthProvider>
+            <ChatSupport />
+          </CartProvider>
+        </AuthProvider>
+      </Suspense>
     </HashRouter>
   );
 }

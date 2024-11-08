@@ -5,19 +5,10 @@ import BookSlider from "../components/BookSlider";
 import { books } from "../data/books";
 import Features from "../components/Features";
 import FeedbackSlider from "../components/FeedbackSlider";
-import Preloader from "../components/PreLoader";
-import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
   const featuredBooks = books.slice(0, 6);
   const newArrivals = [...books].reverse().slice(0, 6);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-  }, []);
 
   const promotions = [
     {
@@ -44,8 +35,6 @@ export default function Home() {
   ];
 
   return (
-    <>
-      {isLoading && <Preloader/>}
       <main className="flex-grow">
         <MainSlider />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -151,6 +140,5 @@ export default function Home() {
           </div>
         </div>
       </main>
-    </>
   );
 }
