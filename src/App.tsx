@@ -16,6 +16,7 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Orders = lazy(() => import("./pages/Orders"));
 const PaymentCompleted = lazy(() => import("./pages/PaymentCompleted"));
 const PaymentCancelled = lazy(() => import("./pages/PaymentCancelled"));
+const Processing = lazy(() => import("./pages/Processing"));
 const ChatSupport = lazy(() => import("./components/ChatSupport"));
 
 export default function App() {
@@ -57,6 +58,7 @@ export default function App() {
                       path="/payment/cancelled"
                       element={<PaymentCancelled />}
                     />
+                    <Route path="/payment/processing" element={<Processing />} />
                   </>
                 ) : (
                   <Route

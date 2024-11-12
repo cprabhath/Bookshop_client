@@ -59,7 +59,7 @@ export default function ProductView({ book, onClose }: ProductViewProps) {
                 {book.title}
               </h2>
               <p className="text-lg text-gray-600 mb-4">
-                by {book.author?.name}
+                by {book.author.name}
               </p>
 
               <div className="flex items-center mb-4">
@@ -102,11 +102,11 @@ export default function ProductView({ book, onClose }: ProductViewProps) {
                 <dl className="grid grid-cols-1 gap-2 text-sm">
                   <div className="flex">
                     <dt className="text-gray-500 w-24">Category:</dt>
-                    <dd className="text-gray-900">{book.category?.name}</dd>
+                    <dd className="text-gray-900">{book.category.name}</dd>
                   </div>
                   <div className="flex">
                     <dt className="text-gray-500 w-24">ISBN:</dt>
-                    <dd className="text-gray-900">{book.id}</dd>
+                    <dd className="text-gray-900">{book.isbn}</dd>
                   </div>
                   <div className="flex">
                     <dt className="text-gray-500 w-24">Pages:</dt>

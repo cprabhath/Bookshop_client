@@ -16,6 +16,7 @@ export interface Book {
   category: Category;
   discount: number;
   isbn?: string;
+  qty?: number;
 }
 
 export interface Customer {
@@ -35,6 +36,7 @@ export interface CartItem extends Book {
 
 
 export interface Order {
+  orderId: string;
   id: string;
   date: string;
   total: number;

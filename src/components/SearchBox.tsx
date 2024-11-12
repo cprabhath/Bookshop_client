@@ -1,13 +1,13 @@
-import { Search, X, Loader2 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-import { getBooks } from "../data/books";
-import { useNavigate } from "react-router-dom";
-import { Book } from "../types";
+import { Search, X, Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import useBooks from '../data/books';
+import { useNavigate } from 'react-router-dom';
+import { Book } from '../types';
 
 export default function SearchBox() {
-  const [books, setBooks] = useState<Book[]>([]);
+  const books = useBooks();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,29 +16,13 @@ export default function SearchBox() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchedBooks = await getBooks();
-        setBooks(fetchedBooks);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(event.target as Node)
-      ) {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         handleCloseResults();
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -52,23 +36,16 @@ export default function SearchBox() {
       // Debounced search with a 300ms delay
       searchTimeout.current = setTimeout(() => {
         const query = searchQuery.trim().toLowerCase();
-        const queryTokens = query.split(" "); // Split into words
+        const queryTokens = query.split(' '); // Split into words
 
         const filtered = books.filter((book) => {
           const title = book.title.toLowerCase();
-          const author = book.author?.name
-            ? book.author.name.toLowerCase()
-            : "";
-          const category = book.category?.name
-            ? book.category.name.toLowerCase()
-            : "";
+          const author = book.author?.name ? book.author.name.toLowerCase() : '';
+          const category = book.category?.name ? book.category.name.toLowerCase() : '';
 
           // Check if all query tokens are present in either title or author
           return queryTokens.every(
-            (token) =>
-              title.includes(token) ||
-              author?.includes(token) ||
-              category.includes(token)
+            (token) => title.includes(token) || author?.includes(token) || category.includes(token)
           );
         });
 
@@ -98,7 +75,7 @@ export default function SearchBox() {
 
   const handleBookClick = (bookId: string) => {
     handleCloseResults();
-    setSearchQuery("");
+    setSearchQuery('');
     navigate(`/shop?book=${bookId}`);
   };
 
@@ -106,7 +83,7 @@ export default function SearchBox() {
     <div ref={searchRef} className="relative">
       <div
         className={`flex items-center transition-all duration-300 ${
-          isExpanded ? "w-64 md:w-96" : "w-10"
+          isExpanded ? 'w-64 md:w-96' : 'w-10'
         }`}
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => !searchQuery && setIsExpanded(false)}
@@ -117,16 +94,14 @@ export default function SearchBox() {
           ) : (
             <Search
               className={`h-5 w-5 text-gray-400 transition-opacity duration-300 ${
-                isExpanded ? "opacity-100" : "opacity-70"
+                isExpanded ? 'opacity-100' : 'opacity-70'
               }`}
             />
           )}
         </div>
         <input
           type="text"
-          placeholder={
-            isExpanded ? "Search by Book name, author, or category" : ""
-          }
+          placeholder={isExpanded ? 'Search by Book name, author, or category' : ''}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => {
@@ -134,13 +109,13 @@ export default function SearchBox() {
             if (searchQuery) setShowResults(true);
           }}
           className={`w-full pl-10 pr-4 py-2 rounded-full border-2 border-gray-300 focus:outline-none focus:border-primary-500 transition-all duration-300 ${
-            isExpanded ? "opacity-100" : "opacity-0"
+            isExpanded ? 'opacity-100' : 'opacity-0'
           }`}
         />
         {searchQuery && (
           <button
             onClick={() => {
-              setSearchQuery("");
+              setSearchQuery('');
               setShowResults(false);
             }}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
@@ -153,9 +128,7 @@ export default function SearchBox() {
       {/* Search Results Dropdown */}
       <div
         className={`absolute mt-2 w-full bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-hidden transition-all duration-300 ${
-          showResults
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 -translate-y-4 pointer-events-none"
+          showResults ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         }`}
       >
         <div className="overflow-y-auto max-h-96">
@@ -172,8 +145,8 @@ export default function SearchBox() {
                 <div
                   key={book.id}
                   onClick={() => handleBookClick(book.id)}
-                  className={`flex items-center space-x-4 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-all duration-300 animate-fadeIn`}
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  className={`flex items-center space-x-4 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-all duration-00 animate-fadeIn`}
+                  style={{ animationDelay: `${index * 30}ms` }}
                 >
                   <div className="w-12 h-16 bg-gray-100 rounded overflow-hidden">
                     <img
@@ -186,7 +159,7 @@ export default function SearchBox() {
                     <h4 className="text-sm font-medium text-gray-900 line-clamp-1">
                       {book.title}
                     </h4>
-                    <p className="text-sm text-gray-500">{book.author?.name}</p>
+                    <p className="text-sm text-gray-500">{book.author.name}</p>
                   </div>
                 </div>
               ))}

@@ -13,12 +13,13 @@ import {
 import { Link } from "react-router-dom";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
-import { books } from "../data/books";
+import useBooks from "../data/books";
 import { useToast } from "../hooks/use-toast";
 import AxiosInstance from "../lib/AxiosInstence";
 
 export default function Register() {
   const { toast } = useToast();
+  const books = useBooks();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -83,7 +84,7 @@ export default function Register() {
         console.log(err);
         if (err.response.data) {
           err.response.data.$values
-            .map((x) => x.errorMessage || x.description)
+            .map((x: { errorMessage: string; description: string; }) => x.errorMessage || x.description)
             .forEach((error: string) => {
               toast({
                 title: "Uh oh! Something went wrong.",

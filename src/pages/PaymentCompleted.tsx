@@ -1,7 +1,20 @@
 import { CheckCircle, ArrowRight, Home, MailCheck, Package, Truck } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export default function PaymentCompleted() {
+  const [searchParams] = useSearchParams();
+  const [orderId, setOrderId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const orderId = searchParams.get("orderId");
+    if (!orderId) {
+      window.location.href = "/payment/cancelled";
+      return;
+    }
+    setOrderId(orderId);
+  }, [searchParams]);
+
   return (
     <main className="min-h-screen pt-12 pb-16 bg-gradient-to-br from-primary-50 via-white to-secondary-50">
       <div className="max-w-2xl mx-auto px-4">
@@ -18,7 +31,7 @@ export default function PaymentCompleted() {
           <div className="bg-gray-50 rounded-lg p-6 mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
             <div className="space-y-2 text-gray-600">
-              <p>Order Number: #ORD-2024-001</p>
+              <p>Order Number: #{orderId}</p>
               <p>Date: {new Date().toLocaleDateString()}</p>
               <p>Payment Method: Credit Card</p>
             </div>

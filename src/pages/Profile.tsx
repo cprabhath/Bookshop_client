@@ -21,17 +21,15 @@ import Spinner from "../components/Spinner";
 export default function Profile() {
   const { toast } = useToast();
   const [loading, setLoading] = useState<boolean>(true);
+  const [orders, setOrders] = useState(0);
   const [profile, setProfile] = useState({
-    id: 0,
     image: "",
     name: "",
     email: "",
     mobileNumber: "",
     address: "",
     bio: "",
-    booksRead: 0,
     readingGoals: 0,
-    orders: { $values: [] },
     favoriteGenres: { $values: [] },
   });
 
@@ -48,9 +46,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!userDetails?.id) return;
-
     setLoading(true);
-
     const fetchProfile = async () => {
       try {
         const res = await AxiosInstance.get(`/Customer/${userDetails.id}`);
@@ -66,16 +62,13 @@ export default function Profile() {
         });
       }
     };
+    
 
     const fetchOrders = async () => {
       try {
-        const res = await AxiosInstance.get(`/Order/${userDetails.id}`);
-        const ordersData = res.data.$values || [];
-        setProfile((prevProfile) => ({
-          ...prevProfile,
-          orders: { $values: ordersData },
-          booksRead: ordersData.length,
-        }));
+        const res = await AxiosInstance.get(`/Order/count/${userDetails.id}`);
+        const ordersData = res.data || 0;
+        setOrders(ordersData);
       } catch (error) {
         toast({
           title: "Error",
@@ -84,13 +77,9 @@ export default function Profile() {
         });
       }
     };
-
     fetchProfile();
     fetchOrders();
-    
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000); 
+    setLoading(false);
   }, [userDetails?.id, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,6 +96,7 @@ export default function Profile() {
       });
       setLoading(false);
     } catch (error) {
+      console.log(error);
       toast({
         title: "Error",
         description: error.message || "Failed to update your profile.",
@@ -121,23 +111,26 @@ export default function Profile() {
     {
       icon: BookOpen,
       label: "Books Read",
-      value: profile.booksRead > 0 ? profile.booksRead : 0,
+      value: orders > 0 ? orders : 0,
     },
     {
       icon: Heart,
       label: "Favorite Genres",
-      value: profile.favoriteGenres.$values.length > 0 ? profile.favoriteGenres.$values.length : 0,
+      value:
+        profile.favoriteGenres.$values.length > 0
+          ? profile.favoriteGenres.$values.length
+          : 0,
     },
     {
       icon: Clock,
       label: "Reading Goal",
-      value: `${profile.booksRead}/${profile.readingGoals}`,
+      value: `${orders}/${profile.readingGoals}`,
     },
   ];
   return (
     <>
       {loading ? (
-       <Spinner/>
+        <Spinner />
       ) : (
         <>
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
@@ -372,10 +365,10 @@ export default function Profile() {
                       <div className="text-right">
                         <span className="text-xs font-semibold inline-block text-primary-600">
                           {Math.round(
-                            (profile.orders.$values.length /
+                            (orders /
                               profile.readingGoals) *
                               100
-                          )}
+                          ) || 0}
                           %
                         </span>
                       </div>
@@ -384,7 +377,7 @@ export default function Profile() {
                       <div
                         style={{
                           width: `${
-                            (profile.orders.$values.length /
+                            (orders /
                               profile.readingGoals) *
                             100
                           }%`,
@@ -393,7 +386,7 @@ export default function Profile() {
                       ></div>
                     </div>
                     <p className="text-sm text-gray-600">
-                      You've ordered {profile.orders.$values.length} out of your{" "}
+                      You've ordered {orders} out of your{" "}
                       {profile.readingGoals} books goal this year. Keep it up!
                     </p>
                   </div>

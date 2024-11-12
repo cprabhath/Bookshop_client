@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Book } from "../types";
 import { useCart } from "../context/CartContext";
 import { ShoppingBag } from "lucide-react";
 import { formatPrice } from "../utils/format";
 import { useToast } from "../hooks/use-toast";
 import { useAuth } from "../context/AuthContext";
-
 
 interface BookCardProps {
   book: Book;
@@ -14,8 +13,15 @@ interface BookCardProps {
 export default function BookCard({ book }: BookCardProps) {
   const { addToCart } = useCart();
   const { toast } = useToast();
+  const [OutOfStock, setOutOfStock] = useState(false);
   const { isLoggedIn } = useAuth();
-  const discount = book.discount || 0;
+  const discount = book.discount || 10;
+
+  useEffect(() => {
+    if (book.qty === 0) {
+      setOutOfStock(true);
+    }
+  }, [book.qty])
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -23,15 +29,15 @@ export default function BookCard({ book }: BookCardProps) {
       toast({
         title: "Uh oh! Something went wrong.",
         description: "Please login to add items to cart",
-        variant: "info"
-      })
+        variant: "info",
+      });
       return;
     }
     addToCart(book);
     toast({
       title: "Item added to cart",
       description: `${book.title} has been added to your cart`,
-      variant: "success"
+      variant: "success",
     });
   };
 
@@ -41,6 +47,12 @@ export default function BookCard({ book }: BookCardProps) {
         {discount > 0 && (
           <div className="z-10 absolute top-2 right-2 bg-gradient-to-r from-red-500 to-rose-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-md">
             {discount}% OFF
+          </div>
+        )}
+
+        {OutOfStock && (
+          <div className="z-10 absolute top-2 right-2 bg-gradient-to-r from-red-500 to-rose-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-md">
+            Out of Stock
           </div>
         )}
         <img
@@ -73,7 +85,8 @@ export default function BookCard({ book }: BookCardProps) {
           </div>
           <button
             onClick={(e) => handleAddToCart(e)}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors disabled:opacity-60 "
+            disabled={OutOfStock}
           >
             <ShoppingBag className="h-4 w-4" />
             Add to Cart

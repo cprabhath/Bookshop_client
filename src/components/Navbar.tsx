@@ -63,14 +63,6 @@ const Navbar: React.FC = () => {
       .then((res) => {
         setProfilePicture(res.data);
       })
-      .catch(() => {
-        toast({
-          title: "Error",
-          description: "Failed to fetch user details",
-          variant: "destructive",
-        })
-      });
-
   }, [toast, userDetails.id]);
 
   return (

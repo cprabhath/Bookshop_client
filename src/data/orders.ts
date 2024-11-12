@@ -5,6 +5,7 @@ async function getOrders(id: string) {
   try {
     const response = await AxiosInstance.get(`/order/${id}`);
     return response.data.$values.map((order : Order) => ({
+      orderId: order.orderId,
       id: order.id,
       date: order.date,
       total: order.total,

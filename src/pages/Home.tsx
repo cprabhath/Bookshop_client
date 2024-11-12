@@ -3,33 +3,22 @@ import { ArrowRight, ShoppingBag, Gift, Percent } from "lucide-react";
 import { Link } from "react-router-dom";
 import MainSlider from "../components/MainSlider";
 import BookSlider from "../components/BookSlider";
-import { getBooks } from "../data/books";
+import useBooks from "../data/books";
 import Features from "../components/Features";
 import FeedbackSlider from "../components/FeedbackSlider";
-import { Book } from "../types";
 import Spinner from "../components/Spinner";
 
 export default function Home() {
-  const [books, setBooks] = useState<Book[]>([]);
+  const books = useBooks();
   const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchedBooks = await getBooks();
-        setBooks(fetchedBooks);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData(); // Trigger fetch
-  }, []);
-
   const featuredBooks = books.slice(0, 6);
   const newArrivals = [...books].reverse().slice(0, 6);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []); 
 
   const promotions = [
     {

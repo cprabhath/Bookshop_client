@@ -37,6 +37,8 @@ const PasswordChange = ({ isOpen, onClose, Email }: PasswordChangeProps) => {
       Password: password,
     };
 
+    console.log(formData);
+
     await AxiosInstance.post("/Auth/password-reset", formData)
       .then(() => {
         toast({
@@ -50,6 +52,14 @@ const PasswordChange = ({ isOpen, onClose, Email }: PasswordChangeProps) => {
         onClose();
       })
       .catch((err) => {
+        console.log(err.response.data);
+        if(err.response.data){
+          toast({
+            title: "Uh oh! Something went wrong.",
+            description: err.response.data,
+            variant: "destructive",
+          });
+        }
         if (err.response.data) {
           err.response.data.$values
             .map((x) => x.errorMessage || x.description)
