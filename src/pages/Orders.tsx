@@ -11,6 +11,7 @@ import {
   Undo2,
   MessageCircleHeart,
   XCircle,
+  Trash2,
 } from "lucide-react";
 import { formatPrice } from "../utils/format";
 import FeedbackModel from "../components/FeedbackModel";
@@ -19,6 +20,7 @@ import { getOrders } from "../data/orders";
 import { Order } from "../types";
 import Spinner from "../components/Spinner";
 import OrderCancel from "../components/OrderCancel";
+import OrderDelete from "../components/OrderDelete";
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -55,6 +57,8 @@ export default function Orders() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isLogoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [isOrderDeleteDialogOpen, setOrderDeleteDialogOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   console.log(orders);
 
@@ -95,8 +99,15 @@ export default function Orders() {
       }
     });
 
-  const handleCancel = (e: React.FocusEvent) => {
+  const handleDeleteOrder = (e: React.FocusEvent, order) => {
     e.preventDefault();
+    setSelectedOrder(order);
+    setOrderDeleteDialogOpen(true);
+  };
+
+  const handleCancel = (e: React.FocusEvent, order) => {
+    e.preventDefault();
+    setSelectedOrder(order);
     setLogoutDialogOpen(true);
   };
 
@@ -213,6 +224,16 @@ export default function Orders() {
                           >
                             {order.status}
                           </span>
+                          {order.status === "Delivered" ||
+                          order.status === "Cancelled" ? (
+                            <button
+                              onClick={(e) => handleDeleteOrder(e, order)}
+                            >
+                              <span className="text-sm p-4 px-3 py-1 rounded-full font-medium">
+                                <Trash2 className="h-4 w-4 text-red-600" />
+                              </span>
+                            </button>
+                          ) : null}
                         </div>
                       </div>
                     </div>
@@ -272,7 +293,7 @@ export default function Orders() {
                               order.status === "Delivered" ||
                               order.status === "Cancelled"
                             }
-                            onClick={(e) => handleCancel(e)}
+                            onClick={(e) => handleCancel(e, order)}
                             className="flex items-center bg-red-600 p-3 rounded-md text-white font-medium text-sm me-2 hover:bg-red-900 disabled:opacity-60"
                           >
                             <XCircle className="h-4 w-4 mx-2" />
@@ -336,15 +357,22 @@ export default function Orders() {
         </>
       )}
 
-      {orders.map((order) => (
-        <OrderCancel
-          key={order.orderId}
-          isOpen={isLogoutDialogOpen}
-          onClose={() => setLogoutDialogOpen(false)}
-          Orderid={order.id}
-          id={order.orderId}
-        />
-      ))}
+      {selectedOrder && (
+        <>
+          <OrderDelete
+            isOpen={isOrderDeleteDialogOpen}
+            onClose={() => setOrderDeleteDialogOpen(false)}
+            Orderid={selectedOrder.id}
+            id={selectedOrder.orderId}
+          />
+          <OrderCancel
+            isOpen={isLogoutDialogOpen}
+            onClose={() => setLogoutDialogOpen(false)}
+            Orderid={selectedOrder.id}
+            id={selectedOrder.orderId}
+          />
+        </>
+      )}
     </>
   );
 }

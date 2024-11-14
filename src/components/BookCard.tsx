@@ -5,6 +5,7 @@ import { ShoppingBag } from "lucide-react";
 import { formatPrice } from "../utils/format";
 import { useToast } from "../hooks/use-toast";
 import { useAuth } from "../context/AuthContext";
+import AxiosInstance from "../lib/AxiosInstence";
 
 interface BookCardProps {
   book: Book;
@@ -13,15 +14,22 @@ interface BookCardProps {
 export default function BookCard({ book }: BookCardProps) {
   const { addToCart } = useCart();
   const { toast } = useToast();
-  const [OutOfStock, setOutOfStock] = useState(false);
+  const [ OutOfStock, setOutOfStock ] = useState(false);
   const { isLoggedIn } = useAuth();
   const discount = book.discount || 10;
 
   useEffect(() => {
-    if (book.qty === 0) {
+    AxiosInstance.get(`/Book/${book.id}`)
+      .then((response) => {
+        book.qty = response.data.qty;
+      })
+      .catch(() => {
+        book.qty = 0;
+      });
+    if (book.qty < 0 || book.qty === 0) {
       setOutOfStock(true);
     }
-  }, [book.qty])
+  }, [book, book.qty]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -85,11 +93,13 @@ export default function BookCard({ book }: BookCardProps) {
           </div>
           <button
             onClick={(e) => handleAddToCart(e)}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors disabled:opacity-60 "
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors disabled:opacity-60"
             disabled={OutOfStock}
           >
             <ShoppingBag className="h-4 w-4" />
-            Add to Cart
+            {
+              OutOfStock ? "Out of Stock" : "Add to Cart"
+            }
           </button>
         </div>
       </div>

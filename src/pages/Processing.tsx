@@ -35,7 +35,7 @@ const Processing = () => {
         .catch(() => {
           navigate("/payment/cancelled");
         });
-    }, 3000);
+    }, 4000);
   }, [navigate, searchParams]);
 
   return (

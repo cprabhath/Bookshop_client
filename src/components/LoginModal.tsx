@@ -11,6 +11,7 @@ import {
   DialogDescription,
 } from "../components/ui/dialog";
 import { useToast } from "../hooks/use-toast";
+import PasswordChange from "./PasswordChange";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ interface LoginModalProps {
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const { login } = useAuth();
   const [loading, setloading] = useState(false);
+  const [openPassword, setOpenPassword] = useState(false);
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     email: "",
@@ -48,6 +50,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   };
 
   return (
+    <>
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
@@ -115,12 +118,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               </label>
             </div>
 
-            <a
-              href="#"
+            <button
+              type="button"
+              onClick={() => setOpenPassword(true)}
               className="text-sm text-primary-600 hover:text-primary-500"
             >
               Forgot password?
-            </a>
+            </button>
           </div>
 
           <DialogFooter>
@@ -137,5 +141,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         </form>
       </DialogContent>
     </Dialog>
+    <PasswordChange isOpen={openPassword} onClose={() => setOpenPassword(false)} Email={formData.email}/>
+    </>
   );
 }

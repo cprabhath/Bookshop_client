@@ -1,8 +1,10 @@
+import React, { useEffect, useState } from "react"; 
 import { ShoppingBag, Star } from "lucide-react";
 import { Book } from "../types";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
 import { useAuth } from "../context/AuthContext";
+import AxiosInstance from "../lib/AxiosInstence";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +21,21 @@ interface ProductViewProps {
 export default function ProductView({ book, onClose }: ProductViewProps) {
   const { addToCart } = useCart();
   const { isLoggedIn } = useAuth();
+  const [ OutOfStock, setOutOfStock ] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    AxiosInstance.get(`/Book/${book.id}`)
+      .then((response) => {
+        book.qty = response.data.qty;
+      })
+      .catch(() => {
+        book.qty = 0;
+      });
+    if (book.qty < 0 || book.qty === 0) {
+      setOutOfStock(true);
+    }
+  }, [book, book.qty]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -86,13 +102,26 @@ export default function ProductView({ book, onClose }: ProductViewProps) {
               </p>
 
               <div className="space-y-4">
-                <button
-                  onClick={(e) => handleAddToCart(e)}
-                  className="w-full flex items-center justify-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors"
-                >
-                  <ShoppingBag className="h-5 w-5" />
-                  Add to Cart
-                </button>
+               {
+                  OutOfStock ? (
+                    <button
+                      onClick={handleAddToCart}
+                      className="flex items-center gap-2 bg-red-300 text-white px-4 py-2 rounded-md hover:bg-red-400 transition-colors disabled:opacity-60"
+                      disabled
+                    >
+                      <ShoppingBag className="h-4 w-4" />
+                      Out of Stock
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleAddToCart}
+                      className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
+                    >
+                      <ShoppingBag className="h-4 w-4" />
+                      Add to Cart
+                    </button>
+                  )
+               }
               </div>
 
               <div className="mt-6 border-t pt-6">

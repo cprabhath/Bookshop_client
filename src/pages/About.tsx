@@ -103,11 +103,11 @@ export default function About() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 ">
           {values.map((value, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-transform duration-300"
+              className="bg-white rounded-xl border shadow-lg p-6 transform hover:scale-105 transition-transform duration-300"
             >
               <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
                 <value.icon className="h-6 w-6 text-primary-600" />

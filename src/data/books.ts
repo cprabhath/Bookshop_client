@@ -7,7 +7,7 @@ const useBooks = () => {
   const { toast } = useToast();
   const [books, setBooks] = useState<Book[]>([
     {
-      id: '1',
+      id: '7',
       title: 'The Midnight Library',
       author: {
         name: 'Matt Haig',

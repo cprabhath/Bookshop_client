@@ -99,7 +99,7 @@ export default function Contact() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Form */}
-          <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="bg-white rounded-2xl shadow-xl p-8 border">
             <div className="flex items-center space-x-3 mb-8">
               <MessageSquare className="h-6 w-6 text-primary-600" />
               <h2 className="text-2xl font-bold text-gray-900">Send us a Message</h2>
@@ -164,7 +164,7 @@ export default function Contact() {
           {/* Additional Information */}
           <div className="space-y-8">
             {/* Business Hours */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border">
               <div className="flex items-center space-x-3 mb-6">
                 <Clock className="h-6 w-6 text-primary-600" />
                 <h3 className="text-xl font-bold text-gray-900">Business Hours</h3>
@@ -184,7 +184,7 @@ export default function Contact() {
             </div>
 
             {/* Global Presence */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border">
               <div className="flex items-center space-x-3 mb-6">
                 <Globe className="h-6 w-6 text-primary-600" />
                 <h3 className="text-xl font-bold text-gray-900">Global Presence</h3>

@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
 import BookCard from './BookCard';
 import { Book } from '../types';
 
