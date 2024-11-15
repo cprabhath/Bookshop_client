@@ -33,12 +33,27 @@ export default function Register() {
 
   const readingGoals = [
     {
-      value: "casual",
+      value: "10",
       label: "Casual Reader",
       description: "1-2 books per month",
     },
-    { value: "avid", label: "Avid Reader", description: "3-5 books per month" },
-    { value: "bookworm", label: "Bookworm", description: "6+ books per month" },
+    { value: "20", label: "Avid Reader", description: "3-5 books per month" },
+    { value: "35", label: "Bookworm", description: "6+ books per month" },
+    {
+      value: "50",
+      label: "Book Dragon",
+      description: "10+ books per month",
+    },
+    {
+      value: "75",
+      label: "Book Master",
+      description: "15+ books per month",
+    },
+    {
+      value: "100",
+      label: "Book God",
+      description: "20+ books per month",
+    },
   ];
 
   const uniqueCategories = new Set<string>();
@@ -84,7 +99,10 @@ export default function Register() {
         console.log(err);
         if (err.response.data) {
           err.response.data.$values
-            .map((x: { errorMessage: string; description: string; }) => x.errorMessage || x.description)
+            .map(
+              (x: { errorMessage: string; description: string }) =>
+                x.errorMessage || x.description
+            )
             .forEach((error: string) => {
               toast({
                 title: "Uh oh! Something went wrong.",
