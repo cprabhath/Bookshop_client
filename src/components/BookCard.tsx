@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Book } from "../types";
 import { useCart } from "../context/CartContext";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { formatPrice } from "../utils/format";
 import { useToast } from "../hooks/use-toast";
 import { useAuth } from "../context/AuthContext";
@@ -93,13 +93,14 @@ export default function BookCard({ book }: BookCardProps) {
           </div>
           <button
             onClick={(e) => handleAddToCart(e)}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors disabled:opacity-60"
+            className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+              OutOfStock 
+                ? "bg-red-600 text-white opacity-60 cursor-not-allowed disabled:opacity-60" 
+                : "bg-green-600 text-white hover:bg-green-700"
+            }`}
             disabled={OutOfStock}
           >
-            <ShoppingBag className="h-4 w-4" />
-            {
-              OutOfStock ? "Out of Stock" : "Add to Cart"
-            }
+            <ShoppingCart className="h-4 w-4" />
           </button>
         </div>
       </div>

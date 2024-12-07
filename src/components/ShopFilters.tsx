@@ -94,8 +94,8 @@ export default function ShopFilters({
             />
           </div>
           <div className="flex justify-between text-sm text-black">
-            <span>${priceRange[0]}</span>
-            <span>${priceRange[1]}</span>
+            <span>LKR {priceRange[0]}</span>
+            <span>LKR {priceRange[1]}</span>
           </div>
         </div>
       </div>
