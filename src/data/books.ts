@@ -12,7 +12,7 @@ const useBooks = () => {
       author: {
         name: 'Matt Haig',
       },
-      price: 24.99,
+      price: 240.99,
       image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800',
       description: 'Between life and death there is a library, and within that library, the shelves go on forever.',
       category: {
@@ -28,7 +28,7 @@ const useBooks = () => {
       author: {
         name: 'James Clear',
       },
-      price: 19.99,
+      price: 190.99,
       image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800',
       description: 'Transform your life with tiny changes that lead to remarkable results.',
       category: {
@@ -44,7 +44,7 @@ const useBooks = () => {
       author: {
         name: 'Andy Weir',
       },
-      price: 27.99,
+      price: 270.99,
       image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=800',
       description: 'A lone astronaut must save humanity from a catastrophic extinction event.',
       category: {
@@ -60,7 +60,7 @@ const useBooks = () => {
       author: {
         name: 'Morgan Housel',
       },
-      price: 21.99,
+      price: 210.99,
       image: 'https://images.unsplash.com/photo-1554774853-719586f82d77?auto=format&fit=crop&q=80&w=800',
       description: 'Timeless lessons on wealth, greed, and happiness.',
       category: {
@@ -76,7 +76,7 @@ const useBooks = () => {
       author: {
         name: 'Alex Michaelides',
       },
-      price: 23.99,
+      price: 230.99,
       image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=800',
       description: "A woman's act of violence against her husband, and the therapist obsessed with uncovering her motive.",
       category: {
@@ -92,7 +92,7 @@ const useBooks = () => {
       author: {
         name: 'Frank Herbert',
       },
-      price: 25.99,
+      price: 250.99,
       image: 'https://images.unsplash.com/photo-1465929639680-64ee080eb3ed?auto=format&fit=crop&q=80&w=800',
       description: 'A stunning blend of adventure and mysticism, environmentalism and politics.',
       category: {

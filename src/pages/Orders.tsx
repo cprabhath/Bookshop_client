@@ -21,6 +21,7 @@ import { Order } from "../types";
 import Spinner from "../components/Spinner";
 import OrderCancel from "../components/OrderCancel";
 import OrderDelete from "../components/OrderDelete";
+import OrderReturn from "../components/OrderReturn";
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -59,6 +60,7 @@ export default function Orders() {
   const [isLogoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [isOrderDeleteDialogOpen, setOrderDeleteDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isreturn, setReturn] = useState(false);
 
   console.log(orders);
 
@@ -99,17 +101,23 @@ export default function Orders() {
       }
     });
 
-  const handleDeleteOrder = (e: React.FocusEvent, order) => {
+  const handleDeleteOrder = (e: React.FocusEvent, order: React.SetStateAction<Order | null>) => {
     e.preventDefault();
     setSelectedOrder(order);
     setOrderDeleteDialogOpen(true);
   };
 
-  const handleCancel = (e: React.FocusEvent, order) => {
+  const handleCancel = (e: React.FocusEvent, order: React.SetStateAction<Order | null>) => {
     e.preventDefault();
     setSelectedOrder(order);
     setLogoutDialogOpen(true);
   };
+
+  const handleReturn = (e: React.FocusEvent, order: React.SetStateAction<Order | null>) => {
+    e.preventDefault();
+    setSelectedOrder(order);
+    setReturn(true);
+  }
 
   return (
     <>
@@ -301,7 +309,9 @@ export default function Orders() {
                           </button>
                           {order.status === "Delivered" && (
                             <div className="flex items-center space-x-2">
-                              <button className="flex items-center bg-red-600 text-white p-3 rounded-md font-medium text-sm hover:bg-red-900">
+                              <button 
+                              onClick={(e) => handleReturn(e, order)}
+                              className="flex items-center bg-red-600 text-white p-3 rounded-md font-medium text-sm hover:bg-red-900">
                                 <Undo2 className="h-4 w-4 mx-2" />
                                 Return your order
                               </button>
@@ -373,6 +383,16 @@ export default function Orders() {
           />
         </>
       )}
+      {
+        isreturn && (
+          <OrderReturn
+          isOpen={isreturn}
+          onClose={() => setReturn(false)}
+          Orderid={selectedOrder.id}
+          id={selectedOrder.orderId}
+          />
+        )
+      }
     </>
   );
 }

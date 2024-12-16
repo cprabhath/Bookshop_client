@@ -22,7 +22,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token); // Set to true if token exists
+    setIsLoggedIn(!!token); 
   }, []);
 
   const login = (token: string) => {

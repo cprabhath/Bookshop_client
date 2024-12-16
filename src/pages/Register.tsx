@@ -254,7 +254,7 @@ export default function Register() {
                             address: e.target.value,
                           })
                         }
-                        placeholder="Confirm your password"
+                        placeholder="Enter your address"
                         className="resize-none pl-10 w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                         required
                       />

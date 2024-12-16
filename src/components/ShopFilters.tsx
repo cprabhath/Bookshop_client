@@ -85,7 +85,7 @@ export default function ShopFilters({
             <input
               type="range"
               min="0"
-              max="100"
+              max="1000"
               value={priceRange[1]}
               onChange={(e) =>
                 onPriceRangeChange([priceRange[0], parseInt(e.target.value)])
@@ -104,7 +104,7 @@ export default function ShopFilters({
       <button
         onClick={() => {
           onSortChange('featured');
-          onPriceRangeChange([0, 100]);
+          onPriceRangeChange([0, 1000]);
           onCategoryChange('All');
         }}
         className="w-full px-4 py-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition-colors"
