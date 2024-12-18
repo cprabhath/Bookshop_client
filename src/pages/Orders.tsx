@@ -49,6 +49,19 @@ const getStatusColor = (status: string) => {
   }
 };
 
+const getBorderColour = (status: string) => {
+  switch (status) {
+    case "Delivered":
+      return "border border-green-300";
+    case "In Transit":
+      return "border border-primary-300";
+    case "Cancelled":
+      return "border border-red-300";
+    default:
+      return "border border-yellow-300";
+  }
+};
+
 export default function Orders() {
   const [searchQuery, setSearchQuery] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
@@ -101,23 +114,32 @@ export default function Orders() {
       }
     });
 
-  const handleDeleteOrder = (e: React.FocusEvent, order: React.SetStateAction<Order | null>) => {
+  const handleDeleteOrder = (
+    e: React.FocusEvent,
+    order: React.SetStateAction<Order | null>
+  ) => {
     e.preventDefault();
     setSelectedOrder(order);
     setOrderDeleteDialogOpen(true);
   };
 
-  const handleCancel = (e: React.FocusEvent, order: React.SetStateAction<Order | null>) => {
+  const handleCancel = (
+    e: React.FocusEvent,
+    order: React.SetStateAction<Order | null>
+  ) => {
     e.preventDefault();
     setSelectedOrder(order);
     setLogoutDialogOpen(true);
   };
 
-  const handleReturn = (e: React.FocusEvent, order: React.SetStateAction<Order | null>) => {
+  const handleReturn = (
+    e: React.FocusEvent,
+    order: React.SetStateAction<Order | null>
+  ) => {
     e.preventDefault();
     setSelectedOrder(order);
     setReturn(true);
-  }
+  };
 
   return (
     <>
@@ -202,12 +224,14 @@ export default function Orders() {
             </div>
 
             {/* Orders List */}
-            <div className="space-y-6 border rounded-lg">
+            <div className="space-y-6 rounded-lg">
               {filteredOrders.length > 0 ? (
                 filteredOrders.map((order) => (
                   <div
                     key={order.id}
-                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                    className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow ${getBorderColour(
+                      order.status
+                    )}`}
                   >
                     {/* Order Header */}
                     <div className="p-6 border-b border-gray-200">
@@ -309,9 +333,10 @@ export default function Orders() {
                           </button>
                           {order.status === "Delivered" && (
                             <div className="flex items-center space-x-2">
-                              <button 
-                              onClick={(e) => handleReturn(e, order)}
-                              className="flex items-center bg-red-600 text-white p-3 rounded-md font-medium text-sm hover:bg-red-900">
+                              <button
+                                onClick={(e) => handleReturn(e, order)}
+                                className="flex items-center bg-red-600 text-white p-3 rounded-md font-medium text-sm hover:bg-red-900"
+                              >
                                 <Undo2 className="h-4 w-4 mx-2" />
                                 Return your order
                               </button>
@@ -383,16 +408,14 @@ export default function Orders() {
           />
         </>
       )}
-      {
-        isreturn && (
-          <OrderReturn
+      {isreturn && (
+        <OrderReturn
           isOpen={isreturn}
           onClose={() => setReturn(false)}
-          Orderid={selectedOrder.id}
-          id={selectedOrder.orderId}
-          />
-        )
-      }
+          Orderid={selectedOrder!.id}
+          id={selectedOrder!.orderId}
+        />
+      )}
     </>
   );
 }
